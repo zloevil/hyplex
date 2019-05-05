@@ -1,0 +1,30 @@
+{
+  "logger": {
+    "level": "all"
+  },
+  "server": {
+    "port": 8080
+  },
+  "crypto": {
+    "hash": {
+      "length": 128
+    }
+  },
+  "restLogLevel": "dev",
+  "lusca": {
+    "csrf": false,
+    "xssProtection": true,
+    "nosniff": true,
+    "hsts": {
+      "maxAge": 31536000,
+      "includeSubDomains": true,
+      "preload": true
+    }
+  },
+  "session": {
+    "ex": 604800000
+  },
+  "rabbit": {
+    "url": "amqp://localhost"
+  }
+}

@@ -1,0 +1,132 @@
+import config from 'config'
+import crypto from 'crypto'
+import * as log4js from 'log4js'
+import db from '../index'
+
+const log = log4js.getLogger('model.user>')
+log.level = config.logger.level
+
+class User {
+  static generateNewHashForPassword(password) {
+    if (password !== undefined) {
+      if (password.length < 4) {
+        throw new Error('The password must contain more than 4 characters')
+      }
+    }
+    const salt = crypto.randomBytes(config.crypto.hash.length).toString('base64')
+
+    if (password) {
+      const hashPassword = crypto.pbkdf2Sync(
+        password,
+        salt,
+        12000,
+        config.crypto.hash.length,
+        'sha256',
+      ).toString('base64')
+      return {
+        salt,
+        hashPassword,
+      }
+    }
+    return null
+  }
+
+  static async checkPassword(login, password) {
+    const result = await db.query`
+      SELECT "digest", "salt"
+      FROM "user"
+      WHERE "login" = ${login}
+    `
+    if (!password) return false
+    if (!result || !result.digest) return false
+    return crypto.pbkdf2Sync(
+      password,
+      result.salt,
+      12000,
+      config.crypto.hash.length,
+      'sha256',
+    ).toString('base64') === result.digest
+  }
+
+  static async checkPasswordById(id, password) {
+    const result = await db.query`
+      SELECT "digest", "salt"
+      FROM "user"
+      WHERE "user_id" = ${id}
+    `
+    if (!password) return false
+    if (!result || !result.digest) return false
+    return crypto.pbkdf2Sync(
+      password,
+      result.salt,
+      12000,
+      config.crypto.hash.length,
+      'sha256',
+    ).toString('base64') === result.digest
+  }
+
+  static async checkLogin(email) {
+    const result = await db.query`
+      SELECT "login"
+      FROM "user"
+      WHERE "login" = ${email}
+    `
+    return result == null || result.email !== email
+  }
+
+  static async registerNewUser(email, password) {
+    const { salt, hashPassword } = this.generateNewHashForPassword(password)
+    await db.query`
+      INSERT INTO "public"."user" ("user_id", "login", "salt", "digest") 
+      VALUES (DEFAULT, ${email}, ${salt}, ${hashPassword});
+    `
+  }
+
+  static async updateUserPassword(id, password) {
+    const resPass = this.generateNewHashForPassword(password)
+    await db.query`
+      UPDATE "public"."user"
+      SET "salt" = ${resPass.salt}, "digest" = ${resPass.hashPassword}
+      WHERE "user_id" = ${id}
+    `
+  }
+
+  static async getUserByLogin(login) {
+    const result = await db.query`
+      SELECT "login", "user_id"
+      FROM "user"
+      WHERE "login" = ${login}
+    `
+    return result
+  }
+
+  static async getUserInfoByLogin(login) {
+    const result = await db.query`
+      SELECT "login", "user_id"
+      FROM "user"
+      WHERE "login" = ${login}
+    `
+    return result
+  }
+
+  static async getUserInfoById(id) {
+    const result = await db.query`
+      SELECT "login", "user_id"
+      FROM "user"
+      WHERE "user_id" = ${id}
+    `
+    return result
+  }
+
+
+  static async getUserById(id) {
+    const result = await db.query`
+      SELECT "login", "user_id"
+      FROM "user"
+      WHERE "user_id" = ${id}
+    `
+    return result
+  }
+}
+
+export default User
