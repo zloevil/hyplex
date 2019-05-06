@@ -4,6 +4,7 @@ import { GraphQLError } from 'graphql'
 import jwt from 'jsonwebtoken'
 import Joi from 'joi'
 import User from '../../../../../db/models/User'
+import Session from '../../../../../db/models/Session'
 
 const log = log4js.getLogger('schema.query.token-type.resolver>')
 log.level = config.logger.level
@@ -19,6 +20,7 @@ export default async (parentValue, { login, password }) => {
     password,
   }, schema)
   if (schemaCheck.error) {
+    log.error('> Error: invalid credentials!')
     return new GraphQLError('> Invalid credentials!')
   }
   try {
@@ -36,18 +38,21 @@ export default async (parentValue, { login, password }) => {
             'write',
           ],
         }
-
-        return jwt.sign(
+        const token = jwt.sign(
           payload,
           process.env.JWT_SECRET,
           {
             expiresIn: 3600 * 24 * 7,
           },
         )
+        await Session.makeNewSession(user.user_id, token)
+        return token
       }
     }
   } catch (e) {
+    log.error('> Error, while trying to check user password, or get user by login!\n', e)
     return new GraphQLError('> Internal server error!')
   }
+  log.error('> Error: invalid credentials!')
   return new GraphQLError('> Invalid password or login!')
 }
