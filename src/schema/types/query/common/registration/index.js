@@ -1,7 +1,7 @@
-import * as log4js from 'log4js'
+import * as log4js from 'log4js/types/log4js'
 import config from 'config'
 import joi from 'joi'
-import User from '../../db/models/User'
+import User from '../../../../../db/models/User'
 
 const log = log4js.getLogger('handler.registration>')
 log.level = config.logger.level

@@ -1,6 +1,6 @@
 import * as log4js from 'log4js'
 import config from 'config'
-import User from '../../../db/models/User'
+import User from '../../../../db/models/User'
 
 const log = log4js.getLogger('schema.user-type.resolver>')
 log.level = config.logger.level

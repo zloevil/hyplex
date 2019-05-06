@@ -1,6 +1,6 @@
-import * as log4js from 'log4js'
+import * as log4js from 'log4js/types/log4js'
 import config from 'config'
-import Session from '../../db/models/Session'
+import Session from '../../../../../db/models/Session'
 
 const log = log4js.getLogger('handler.login>')
 log.level = config.logger.level

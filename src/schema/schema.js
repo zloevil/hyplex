@@ -1,14 +1,8 @@
-import { GraphQLObjectType, GraphQLSchema } from 'graphql'
-import UserType from './types/user'
-
-
-const RootQuery = new GraphQLObjectType({
-  name: 'RootQuery',
-  fields: {
-    user: UserType,
-  },
-})
+import { GraphQLSchema } from 'graphql'
+import RootQuery from './types/query/root-query'
+// import RootMutation from './types/mutations/root-mutation'
 
 export default new GraphQLSchema({
   query: RootQuery,
+  // mutation: RootMutation,
 })
