@@ -4,6 +4,7 @@ import { GraphQLError } from 'graphql'
 import jwt from 'jsonwebtoken'
 import Joi from 'joi'
 import User from '../../../../../db/models/User'
+import Session from '../../../../../db/models/Session'
 
 const log = log4js.getLogger('schema.query.token-type.resolver>')
 log.level = config.logger.level
@@ -36,14 +37,15 @@ export default async (parentValue, { login, password }) => {
             'write',
           ],
         }
-
-        return jwt.sign(
+        const token = jwt.sign(
           payload,
           process.env.JWT_SECRET,
           {
             expiresIn: 3600 * 24 * 7,
           },
         )
+        await Session.makeNewSession(user.user_id, token)
+        return token
       }
     }
   } catch (e) {
