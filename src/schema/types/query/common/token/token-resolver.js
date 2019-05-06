@@ -20,6 +20,7 @@ export default async (parentValue, { login, password }) => {
     password,
   }, schema)
   if (schemaCheck.error) {
+    log.error('> Error: invalid credentials!')
     return new GraphQLError('> Invalid credentials!')
   }
   try {
@@ -49,7 +50,9 @@ export default async (parentValue, { login, password }) => {
       }
     }
   } catch (e) {
+    log.error('> Error, while trying to check user password, or get user by login!\n', e)
     return new GraphQLError('> Internal server error!')
   }
+  log.error('> Error: invalid credentials!')
   return new GraphQLError('> Invalid password or login!')
 }
