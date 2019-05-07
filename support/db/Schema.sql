@@ -10,7 +10,7 @@ create table "user" (
 
 create table session
 (
-    sid varchar(256) not null,
+    sid varchar not null,
     user_id uuid not null,
     ex timestamp not null
 );
