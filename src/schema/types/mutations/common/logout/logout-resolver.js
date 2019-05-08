@@ -3,7 +3,7 @@ import config from 'config'
 import { GraphQLError } from 'graphql'
 import Session from '../../../../../db/models/Session'
 
-const log = log4js.getLogger('schema.query.login-type.resolver>')
+const log = log4js.getLogger('schema.query.logout-type.resolver>')
 log.level = config.logger.level
 
 export default async (parentValue, args, { token }) => {
