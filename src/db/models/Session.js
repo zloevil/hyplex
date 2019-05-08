@@ -49,7 +49,7 @@ class Session {
   }
 
   static updateSessionEX(session, token) {
-    const newEX = (new Date(Date.now() + config.session.ex))
+    const newEX = (new Date(Date.now() + config.session.ex * 1000))
       .toISOString()
       .replace('T', ' ')
       .replace('Z', '')

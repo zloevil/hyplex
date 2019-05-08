@@ -22,7 +22,7 @@
     }
   },
   "session": {
-    "ex": 604800000
+    "ex": 604800
   },
   "rabbit": {
     "url": "amqp://localhost"
