@@ -9,8 +9,8 @@ class Session {
   static async makeNewSession(id, token) {
     const oldSession = await Session.getSessionByUserId(id)
     if (oldSession.sid) {
-      await Session.updateSessionEX(oldSession)
-      return oldSession.sid
+      await Session.updateSessionEX(oldSession, token)
+      return token
     }
     const ex = (new Date(Date.now() + config.session.ex))
       .toISOString()
@@ -48,14 +48,14 @@ class Session {
     `
   }
 
-  static updateSessionEX(session) {
+  static updateSessionEX(session, token) {
     const newEX = (new Date(Date.now() + config.session.ex))
       .toISOString()
       .replace('T', ' ')
       .replace('Z', '')
     return db.query`
       UPDATE "public"."session"
-      SET "ex" = ${newEX}
+      SET "ex" = ${newEX}, "sid" = ${token}
       WHERE "user_id" = ${session.user_id}
     `
   }

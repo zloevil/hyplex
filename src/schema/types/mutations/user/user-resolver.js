@@ -41,7 +41,7 @@ export default async (parentValue, { login, password }) => {
         payload,
         process.env.JWT_SECRET,
         {
-          expiresIn: 3600 * 24 * 7,
+          expiresIn: config.session.ex,
         },
       )
       await Session.makeNewSession(user.user_id, token)
