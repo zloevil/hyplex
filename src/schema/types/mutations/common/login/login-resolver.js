@@ -6,7 +6,7 @@ import Joi from 'joi'
 import User from '../../../../../db/models/User'
 import Session from '../../../../../db/models/Session'
 
-const log = log4js.getLogger('schema.query.token-type.resolver>')
+const log = log4js.getLogger('schema.query.login-type.resolver>')
 log.level = config.logger.level
 
 const schema = Joi.object().keys({

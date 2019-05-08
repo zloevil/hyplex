@@ -1,9 +1,9 @@
 import { GraphQLString, GraphQLNonNull } from 'graphql'
-import TokenType from './token-type'
-import resolve from './token-resolver'
+import LoginType from './login-type'
+import resolve from './login-resolver'
 
 export default {
-  type: TokenType,
+  type: LoginType,
   resolve,
   args: {
     login: { type: new GraphQLNonNull(GraphQLString) },

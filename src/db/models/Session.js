@@ -39,6 +39,15 @@ class Session {
     `
   }
 
+  static getUserByUserToken(token) {
+    return db.query`
+      SELECT u.login, u.user_id
+      FROM session
+      JOIN "user" u on session.user_id = u.user_id
+      WHERE sid = ${token}
+    `
+  }
+
   static updateSessionEX(session) {
     const newEX = (new Date(Date.now() + config.session.ex))
       .toISOString()
