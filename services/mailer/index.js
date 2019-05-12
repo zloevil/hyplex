@@ -1,6 +1,7 @@
 require('@babel/register')
 require('babel-polyfill')
 require('dotenv').config()
+const config = require('config')
 const log4js = require('log4js')
 const mailer = require('./src/mailer')
 const rabbit = require('./src/handler/rabbit').default
@@ -14,7 +15,7 @@ const auth = {
   pass: process.env.DIST_MAIL_PASS,
 }
 
-const linkTemplate = 'http://localhost:8080/email/verify/'
+const linkTemplate = config.linkTemplate
 
 
 async function sendMail(mail, message, auth) {

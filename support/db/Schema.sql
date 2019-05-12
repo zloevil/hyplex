@@ -40,3 +40,39 @@ create table events
     data json
 );
 
+create table account_confirmation
+(
+    user_id uuid not null,
+    event_id varchar not null,
+    timestamp timestamp not null
+);
+
+create unique index account_confirmation_event_id_uindex
+    on account_confirmation (event_id);
+
+create unique index account_confirmation_user_id_uindex
+    on account_confirmation (user_id);
+
+alter table account_confirmation
+    add constraint account_confirmation_pk
+        primary key (user_id);
+
+CREATE FUNCTION delete_old_rows() RETURNS trigger
+    LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM account_confirmation WHERE timestamp < NOW() - INTERVAL '2 days';
+    RETURN NULL;
+END;
+$$;
+
+CREATE TRIGGER trigger_delete_old_rows
+    AFTER INSERT ON account_confirmation
+EXECUTE PROCEDURE delete_old_rows();
+
+alter table account_confirmation
+    add constraint account_confirmation_user_user_id_fk
+        foreign key (user_id) references "user"
+            on delete cascade;
+
+alter table account_confirmation alter column timestamp set default now();

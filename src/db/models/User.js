@@ -76,9 +76,10 @@ class User {
 
   static async registerNewUser(email, password) {
     const { salt, hashPassword } = this.generateNewHashForPassword(password)
-    await db.query`
+    return db.query`
       INSERT INTO "public"."user" ("user_id", "login", "salt", "digest") 
-      VALUES (DEFAULT, ${email}, ${salt}, ${hashPassword});
+      VALUES (DEFAULT, ${email}, ${salt}, ${hashPassword})
+      RETURNING "user_id";
     `
   }
 
@@ -93,7 +94,7 @@ class User {
 
   static async getUserByLogin(login) {
     const result = await db.query`
-      SELECT "login", "user_id"
+      SELECT "login", "user_id", "confirmed"
       FROM "user"
       WHERE "login" = ${login}
     `
@@ -118,6 +119,14 @@ class User {
     return result
   }
 
+  static confirmAccount(id) {
+    return db.query`
+      UPDATE "public"."user"
+      SET "confirmed" = true
+      WHERE "user_id" = ${id}
+    `
+  }
+
 
   static async getUserById(id) {
     const result = await db.query`
@@ -126,6 +135,21 @@ class User {
       WHERE "user_id" = ${id}
     `
     return result
+  }
+
+  static makeNewUserAccountConfirmationTicket(userId, eventId) {
+    return db.query`
+      INSERT INTO "public"."account_confirmation" ("user_id", "event_id", "timestamp")
+      VALUES (${userId}, ${eventId}, DEFAULT)
+    `
+  }
+
+  static getUserIdByEventId(eventId) {
+    return db.query`
+      DELETE FROM public.account_confirmation
+      WHERE event_id=${eventId}
+      RETURNING user_id;
+    `
   }
 }
 

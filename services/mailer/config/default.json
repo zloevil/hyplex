@@ -2,6 +2,7 @@
   "logger": {
     "level": "all"
   },
+  "linkTemplate": "http://localhost:8080/verify/",
   "SMTPTransport":{
     "service": "Gmail",
     "debug": true,

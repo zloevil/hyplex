@@ -24,10 +24,11 @@ export default async (parentValue, { login, password }) => {
     return new GraphQLError('> Invalid credentials!')
   }
   try {
-    await User.registerNewUser(login, password)
-    await rabbit.sendMsg(services.mailer, {
+    const userId = await User.registerNewUser(login, password)
+    const eventId = await rabbit.sendMsg(services.mailer, {
       mail: login,
     })
+    await User.makeNewUserAccountConfirmationTicket(userId.user_id, eventId.id)
     return login
   } catch (e) {
     log.error('> Error, while trying to create a new user!\n', e)
