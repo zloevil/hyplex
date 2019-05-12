@@ -18,5 +18,5 @@ app.use('/api', GraphQL({
 export default app
 
 rabbit.sendMsg(services.mailer, {
-  test: 'test',
+  mail: 'kuhtin.vasya@yandex.ru',
 })
