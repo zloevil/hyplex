@@ -1,10 +1,6 @@
 import config from 'config'
 import crypto from 'crypto'
-import * as log4js from 'log4js'
 import db from '../index'
-
-const log = log4js.getLogger('model.user>')
-log.level = config.logger.level
 
 class User {
   static generateNewHashForPassword(password) {
@@ -48,23 +44,6 @@ class User {
     ).toString('base64') === result.digest
   }
 
-  static async checkPasswordById(id, password) {
-    const result = await db.query`
-      SELECT "digest", "salt"
-      FROM "user"
-      WHERE "user_id" = ${id}
-    `
-    if (!password) return false
-    if (!result || !result.digest) return false
-    return crypto.pbkdf2Sync(
-      password,
-      result.salt,
-      12000,
-      config.crypto.hash.length,
-      'sha256',
-    ).toString('base64') === result.digest
-  }
-
   static async checkLogin(email) {
     const result = await db.query`
       SELECT "login"
@@ -75,33 +54,15 @@ class User {
   }
 
   static async registerNewUser(email, password) {
-    const { salt, hashPassword } = this.generateNewHashForPassword(password)
-    return db.query`
-      INSERT INTO "public"."user" ("user_id", "login", "salt", "digest") 
-      VALUES (DEFAULT, ${email}, ${salt}, ${hashPassword})
-      RETURNING "user_id";
-    `
-  }
-
-  static async updateUserPassword(id, password) {
     const resPass = this.generateNewHashForPassword(password)
     await db.query`
-      UPDATE "public"."user"
-      SET "salt" = ${resPass.salt}, "digest" = ${resPass.hashPassword}
-      WHERE "user_id" = ${id}
+      INSERT INTO "user" ("user_id", "login", "salt", "digest")
+      VALUES (DEFAULT, ${email}, ${resPass.salt}, ${resPass.hashPassword})
     `
   }
 
   static async getUserByLogin(login) {
-    const result = await db.query`
-      SELECT "login", "user_id", "confirmed"
-      FROM "user"
-      WHERE "login" = ${login}
-    `
-    return result
-  }
-
-  static async getUserInfoByLogin(login) {
+    // noinspection UnnecessaryLocalVariableJS
     const result = await db.query`
       SELECT "login", "user_id"
       FROM "user"
@@ -110,46 +71,24 @@ class User {
     return result
   }
 
-  static async getUserInfoById(id) {
+  static async getUserDistributionMail(login) {
+    // noinspection UnnecessaryLocalVariableJS
     const result = await db.query`
-      SELECT "login", "user_id"
+      SELECT "distributionmail", "distributionmailpass", "distributionmailpassiv"
       FROM "user"
-      WHERE "user_id" = ${id}
+      WHERE "login" = ${login}
     `
     return result
   }
-
-  static confirmAccount(id) {
-    return db.query`
-      UPDATE "public"."user"
-      SET "confirmed" = true
-      WHERE "user_id" = ${id}
-    `
-  }
-
 
   static async getUserById(id) {
+    // noinspection UnnecessaryLocalVariableJS
     const result = await db.query`
       SELECT "login", "user_id"
       FROM "user"
       WHERE "user_id" = ${id}
     `
     return result
-  }
-
-  static makeNewUserAccountConfirmationTicket(userId, eventId) {
-    return db.query`
-      INSERT INTO "public"."account_confirmation" ("user_id", "event_id", "timestamp")
-      VALUES (${userId}, ${eventId}, DEFAULT)
-    `
-  }
-
-  static getUserIdByEventId(eventId) {
-    return db.query`
-      DELETE FROM public.account_confirmation
-      WHERE event_id=${eventId}
-      RETURNING user_id;
-    `
   }
 }
 
