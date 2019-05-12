@@ -30,3 +30,13 @@ alter table session
         foreign key (user_id) references "user"
             on delete cascade;
 
+alter table "user"
+    add confirmed boolean default false not null;
+
+create table events
+(
+    service varchar not null,
+    id uuid default uuid_generate_v4() not null,
+    data json
+);
+

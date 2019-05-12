@@ -1,5 +1,5 @@
 {
-  "name": "hyplex_oauth",
+  "name": "hyplex",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -10,6 +10,7 @@
     "@babel/core": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "@babel/register": "^7.4.4",
+    "@types/amqplib": "^0.5.11",
     "@types/boom": "^7.2.1",
     "@types/config": "^0.0.34",
     "@types/connect-pg-simple": "^4.2.0",
@@ -27,6 +28,7 @@
     "@types/passport-local": "^1.0.33",
     "@types/pg": "^7.4.14",
     "@types/supertest": "^2.0.7",
+    "amqplib": "^0.5.3",
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.19.0",
     "boom": "^7.3.0",
