@@ -17,6 +17,6 @@ app.use('/api', GraphQL({
 
 export default app
 
-rabbit.sendMsg(services.mailer.in, {
+rabbit.sendMsg(services.mailer, {
   test: 'test',
 })

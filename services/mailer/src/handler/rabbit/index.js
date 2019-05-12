@@ -1,7 +1,6 @@
 import * as log4js from 'log4js'
 import config from 'config'
 import amqp from 'amqplib/callback_api'
-import Events from '../../db/models/Events'
 
 const log = log4js.getLogger('handlers.rabbit>')
 log.level = config.logger.level
@@ -9,7 +8,6 @@ log.level = config.logger.level
 class Rabbit {
   constructor() {
     this.channels = {}
-    this.queues = {}
   }
 
   connect(connectionURL = process.env.RABBITMQ_URL) {
@@ -49,7 +47,7 @@ class Rabbit {
     })
   }
 
-  makeNewQueue(channelName) {
+  makeNewQueue(channelName, onMessage) {
     return new Promise(async (res, rej) => {
       let channel = this.channels[channelName]
       if (!channel) {
@@ -60,8 +58,8 @@ class Rabbit {
           rej(e)
         }
       }
-      const queueIn = `${channelName}_in`
-      const queueOut = `${channelName}_out`
+      const queueIn = `${channelName}_out`
+      const queueOut = `${channelName}_in`
       channel.assertQueue(queueIn, {
         durable: true,
       })
@@ -70,47 +68,40 @@ class Rabbit {
       })
       channel.prefetch(1)
 
-      channel.consume(queueOut, msg => {
+      channel.consume(queueOut, async msg => {
+        let content
         const id = msg.properties.correlationId
-        log.debug(id)
-        Events.deleteEvent(id)
-          .then(() => {
-            channel.ack(msg)
-          })
-          .catch(reject => log.error('> Error, while trying to delete event from DB!\n', reject))
-      })
-
-      const send = async message => {
-        let msg
         try {
-          msg = JSON.stringify(message)
+          content = JSON.parse(msg.content.toString())
+        } catch (e) {
+          log.error(`> Error, while trying to parse message from ${queueOut}!\n`, e)
+          return
+        }
+        try {
+          await onMessage(id, content)
+        } catch (e) {
+          log.error(`> Error, while trying to handle message from ${queueOut}!\n`, e)
+          return
+        }
+
+        // answer
+        let message
+        try {
+          message = JSON.stringify({
+            createdAt: (new Date()).toISOString()
+          })
         } catch (e) {
           log.error('> Error, while trying to stringify message!\n', e)
         }
-        const id = await Events.makeNewEvent(channelName, msg)
-        channel.sendToQueue(queueIn, Buffer.from(msg), {
+        channel.sendToQueue(queueIn, Buffer.from(message), {
           persistent: true,
-          correlationId: id.id,
+          correlationId: id,
         })
-        return id
-      }
-      res(send)
-      this.queues[channelName] = send
-    })
-  }
+        // answer
 
-  sendMsg(queueName, msg) {
-    return new Promise(async (res, rej) => {
-      let queue = this.queues[queueName]
-      if (!queue) {
-        try {
-          queue = await this.makeNewQueue(queueName)
-        } catch (e) {
-          log.error('> Error, while trying to make a new channel!\n', e)
-          rej(e)
-        }
-      }
-      res(await queue(msg))
+        channel.ack(msg)
+      })
+      res()
     })
   }
 }

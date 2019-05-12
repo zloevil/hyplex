@@ -1,0 +1,29 @@
+{
+  "name": "mailer",
+  "version": "0.0.1",
+  "description": "mailer",
+  "main": "index.js",
+  "author": "zlo271828",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@types/amqplib": "^0.5.11",
+    "@types/log4js": "^2.3.5",
+    "@types/nodemailer": "^4.6.5",
+    "@types/pg": "^7.4.11",
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/register": "^7.4.4",
+    "config": "^3.0.1",
+    "dotenv": "^6.2.0",
+    "juice": "^5.1.0",
+    "log4js": "^4.0.2",
+    "nodemailer": "^5.1.1",
+    "nodemailer-html-to-text": "^3.0.0",
+    "nodemailer-ses-transport": "^1.5.1",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "nodemailer-stub-transport": "^1.1.0",
+    "pg": "^7.8.0",
+    "pug": "^2.0.3"
+  }
+}

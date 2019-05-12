@@ -1,0 +1,17 @@
+{
+  "logger": {
+    "level": "all"
+  },
+  "SMTPTransport":{
+    "service": "Gmail",
+    "debug": true,
+    "auth": {}
+  },
+  "senders": {
+    "default": {
+      "fromEmail": "admin@hyplex.com",
+      "fromName": "admin",
+      "signature": "<em>Не отвечайте на это сообщение, т.к. оно было сгенерировано автоматически!</em>"
+    }
+  }
+}
