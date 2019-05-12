@@ -2,8 +2,6 @@ import express from 'express'
 import GraphQL from 'express-graphql'
 import applyMiddleware from './middlewares'
 import GraphQLSchema from './schema/schema'
-import rabbit from './handlers/rabbit'
-import { services } from './handlers/rabbit/config'
 
 const app = express()
 
@@ -16,7 +14,3 @@ app.use('/api', GraphQL({
 }))
 
 export default app
-
-rabbit.sendMsg(services.mailer, {
-  mail: 'kuhtin.vasya@yandex.ru',
-})

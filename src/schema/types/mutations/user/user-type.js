@@ -1,5 +1,5 @@
 import { GraphQLString } from 'graphql'
 
-const NewUserType = GraphQLString
+const UserType = GraphQLString
 
-export default NewUserType
+export default UserType

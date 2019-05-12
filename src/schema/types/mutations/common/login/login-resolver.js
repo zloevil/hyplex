@@ -27,7 +27,7 @@ export default async (parentValue, { login, password }) => {
     const check = await User.checkPassword(login, password)
     if (check) {
       const user = await User.getUserByLogin(login)
-      if (user) {
+      if (user && user.confirmed) {
         const payload = {
           user: {
             id: user.user_id,
@@ -54,5 +54,5 @@ export default async (parentValue, { login, password }) => {
     return new GraphQLError('> Internal server error!')
   }
   log.error('> Error: invalid credentials!')
-  return new GraphQLError('> Invalid password or login!')
+  return new GraphQLError('> Invalid credentials or account is not confirmed!')
 }
