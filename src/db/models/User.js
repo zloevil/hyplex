@@ -75,10 +75,17 @@ class User {
   }
 
   static async registerNewUser(email, password) {
-    const { salt, hashPassword } = this.generateNewHashForPassword(password)
+    if (!password) {
+      const { salt, hashPassword } = this.generateNewHashForPassword(password)
+      return db.query`
+        INSERT INTO "public"."user" ("user_id", "login", "salt", "digest") 
+        VALUES (DEFAULT, ${email}, ${salt}, ${hashPassword})
+        RETURNING "user_id";
+      `
+    }
     return db.query`
       INSERT INTO "public"."user" ("user_id", "login", "salt", "digest") 
-      VALUES (DEFAULT, ${email}, ${salt}, ${hashPassword})
+      VALUES (DEFAULT, ${email}, '', '')
       RETURNING "user_id";
     `
   }
@@ -150,6 +157,29 @@ class User {
       WHERE event_id=${eventId}
       RETURNING user_id;
     `
+  }
+
+  static async loginViaGoogle({ accessToken, refreshToken, profile }) {
+    const email = profile.emails[0].value
+    let user
+
+    try {
+      user = await this.getUserByLogin(email)
+    } catch (e) {
+      log.error('> Error, while trying to get user by email!\n', e)
+      return null
+    }
+
+    if (Array.isArray(user)) {
+      try {
+        user = await this.registerNewUser(email)
+      } catch (e) {
+        log.error('> Error, while trying to make a new user!\n', e)
+        return null
+      }
+    }
+
+    return user
   }
 }
 
