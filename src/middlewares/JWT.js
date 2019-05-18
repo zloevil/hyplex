@@ -17,13 +17,15 @@ export default async (req, res, next) => {
         process.env.JWT_SECRET,
       )
     } catch (e) {
-      next()
+      log.error('> Error, while trying to verify token!')
+      return res.boom.unauthorized('Error, while trying to verify token!')
     }
 
     try {
       session = await Session.getSessionByUserToken(token)
     } catch (e) {
       log.error('> Error, while trying to get session from DB!\n', e)
+      return res.boom.badImplementation('Internal server error!')
     }
     if (!Array.isArray(session)) {
       const checkExpTime = new Date(session.ex)
@@ -31,7 +33,7 @@ export default async (req, res, next) => {
       const currDate = new Date()
       if (currDate < checkExpTime && currDate < expTime) {
         req.ctx = {
-          id: payload.user.user_id,
+          id: payload.user.id,
           scopes: payload.scopes,
         }
       }

@@ -35,7 +35,7 @@ export default async (_, { accessToken }, { req, res }) => {
     if (data) {
       const user = await User.loginViaGoogle(data)
 
-      if (user) {
+      if (!Array.isArray(user)) {
         const payload = {
           user: {
             id: user.user_id,

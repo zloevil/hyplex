@@ -6,4 +6,9 @@ export default {
   type: UserType,
   resolve,
   args: { login: { type: GraphQLString } },
+  directives: {
+    hasScope: {
+      scope: ['read'],
+    },
+  },
 }

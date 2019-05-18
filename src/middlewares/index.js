@@ -8,7 +8,7 @@ import glob from 'glob'
 import lusca from 'lusca'
 import * as log4js from 'log4js'
 import expressBoom from 'express-boom'
-import tokenParser from '../handlers/common/tokenParser'
+import tokenParser from '../handlers/common/token-parser'
 
 const log = log4js.getLogger('middlewares>')
 log.level = config.logger.level
