@@ -1,0 +1,80 @@
+@startuml
+
+
+
+
+!define _i <&account-login>
+!define _o <&account-logout>
+!define _p <&project>
+!define _b <&caret-right>
+!define _t <&copywriting>
+!define _s <&spreadsheet>
+
+!define c(v)  <size:11>v </size>
+!define i(v)  <color:DimGrey>c(_p v)</color>
+
+!definelong d(v)
+--
+  c(v)
+!enddefinelong
+
+!definelong d(v,v1)
+--
+  c(v)
+  c(v1)
+!enddefinelong
+
+!definelong d(v,v1,v2)
+--
+  c(v)
+  c(v1)
+  c(v2)
+!enddefinelong
+
+!definelong d(v,v1,v2,v3)
+--
+  c(v)
+  c(v1)
+  c(v2)
+  c(v3)
+!enddefinelong
+
+header
+
+  | project:  |       files.JS         |
+  | version:  | 0.0.1                     |
+  | date:     | 2018.08.06                |
+  | updated:  | %date[yyyy.MM.dd HH:mm]%  |
+
+end header
+
+footer
+
+  © RTS %date[yyyy]%
+end footer
+
+title GET /file.zip\n
+
+
+package "files.JS" as filesJS {
+  package "GET file handler" as https {
+    component HASH
+    component DBHashChecker
+    component FileSender
+  }
+
+  HASH ---> DBHashChecker
+  DBHashChecker ---> FileSender
+}
+
+package "Client" as client {
+    package "HTTPS" as httpsClient {
+        component GETFile
+    }
+}
+
+GETFile ---> https
+FileSender ---> client
+
+@enduml
+
