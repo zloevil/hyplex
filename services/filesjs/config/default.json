@@ -3,7 +3,7 @@
     "logLevel": "all"
   },
   "storage": {
-    "path": "../files-js"
+    "path": "../../files-store"
   },
   "server": {
     "port": 8080
