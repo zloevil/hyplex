@@ -18,18 +18,6 @@ export const uploadFile = async (ctx, next) => {
   await next()
 }
 
-export const generateFileOneTimeLink = async (ctx, next) => {
-  const schema = Joi.object().keys({
-    id: MongooseObjectIdJoi.string().isMongoObjectId().required(),
-    lifeTime: Joi.number().integer(),
-  })
-
-  if (Joi.validate({ ...ctx.request.query, ...ctx.params }, schema).error !== null) {
-    throw Boom.badRequest('Invalid body!')
-  }
-  await next()
-}
-
 export const hashValidation = async (ctx, next) => {
   const schema = Joi.object().keys({
     id: Joi.string().required(),
