@@ -76,3 +76,57 @@ alter table account_confirmation
             on delete cascade;
 
 alter table account_confirmation alter column timestamp set default now();
+
+create table announcements
+(
+    id uuid default uuid_generate_v4() not null,
+    data jsonb not null,
+    timestamp timestamp default now() not null
+);
+
+create unique index announcements_id_uindex
+    on announcements (id);
+
+alter table announcements
+    add constraint announcements_pk
+        primary key (id);
+
+create table owners
+(
+    user_id uuid not null
+        constraint owners_user_id_fkey
+            references "user",
+    anno_id uuid not null
+        constraint owners_anno_id_fkey
+            references announcements,
+    constraint owners_pkey
+        primary key (user_id, anno_id)
+);
+
+alter table announcements rename column data to rooms;
+
+alter table announcements
+    add shapes VARCHAR;
+
+CREATE OR REPLACE FUNCTION make_new_announcement (user_id uuid, rooms jsonb, shapes VARCHAR)
+    RETURNS uuid
+AS $$
+DECLARE
+    new_anno_id announcements.id%TYPE;
+BEGIN
+    -- CREATING NEW ANNOUNCEMENT
+    INSERT INTO "public"."announcements" ("id", "rooms", "timestamp", "shapes")
+    VALUES (DEFAULT, rooms, DEFAULT, shapes)
+           RETURNING id INTO new_anno_id;
+
+-- MAKING REFERENCE BETWEEN USER AND ANNOUNCEMENT
+    INSERT INTO "public"."owners" ("user_id", "anno_id")
+    VALUES (
+               user_id,
+               new_anno_id
+           );
+
+    RETURN new_anno_id;
+END; $$
+
+    LANGUAGE 'plpgsql';
