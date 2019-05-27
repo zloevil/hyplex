@@ -10,7 +10,7 @@ const log = log4js.getLogger('schema.query.login-type.resolver>')
 log.level = config.logger.level
 
 const schema = Joi.object().keys({
-  password: Joi.string().required(),
+  password: Joi.string().min(4).required(),
   login: Joi.string().email({ minDomainSegments: 2 }).required(),
 })
 
