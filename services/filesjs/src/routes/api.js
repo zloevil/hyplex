@@ -1,35 +1,59 @@
 import Router from 'koa-router'
 import Boom from 'boom'
-import fs from 'fs-extra'
 import {
-  uploadFile as uploadFileValidation,
+  generateFileOneTimeLink as oneTimeLinkValidation,
 } from '../filters/api-joi'
 
-
-const uploadFile = async ctx => {
-  if (ctx.request.body.directory) {
-    await ctx.db.model('Directory').checkExistence(ctx.request.body.directory)
+async function downloadOneTimeLinkHandler(ctx) {
+  const { id } = ctx.request.body
+  if (id === undefined) {
+    throw Boom.badRequest('Id is undefined!')
   }
-
-  const FileModel = ctx.db.model('File')
-  const file = new FileModel({
-    name: ctx.request.body.name,
+  const file = await ctx.db.model('File').checkExistence(id)
+  const OneTimeLink = ctx.db.model('OneTimeLink')
+  const oneTimeLink = new OneTimeLink({
+    lifeTime: ctx.request.query.lifeTime || null,
+    target: file.get('_id'),
   })
-  try {
-    await file.uploadFile(fs.createReadStream(ctx.request.files.file.path))
-    file.set('status', 'uploaded')
-    await file.save()
-  } catch (e) {
-    if (e.typeof !== Boom.internal() || e.message !== 'Could not write file on disk') {
-      await file.removeFileFromDisk()
-    }
-    throw e
+  await oneTimeLink.save()
+  ctx.body = JSON.stringify(oneTimeLink)
+}
+
+async function uploadOneTimeLinkHandler(ctx) {
+  const OneTimeLink = ctx.db.model('OneTimeLink')
+  const File = ctx.db.model('File')
+  const { name, isZipped, directory } = ctx.request.body
+  const file = new File({
+    name,
+    isZipped,
+    directory,
+  })
+  await file.save()
+
+  const oneTimeLink = new OneTimeLink({
+    lifeTime: ctx.request.query.lifeTime,
+    action: ctx.request.body.type,
+    target: file._id,
+  })
+  await oneTimeLink.save()
+  ctx.body = JSON.stringify(oneTimeLink)
+}
+
+const generateFileOneTimeLink = async ctx => {
+  switch (ctx.request.body.type) {
+    case 'upload':
+      await uploadOneTimeLinkHandler(ctx)
+      break
+    case 'download':
+      await downloadOneTimeLinkHandler(ctx)
+      break
+    default:
+      throw Boom.badRequest('Invalid type of request!')
   }
-  ctx.body = JSON.stringify(file)
 }
 
 const router = new Router()
 router.prefix('/api')
-router.post('/file', uploadFileValidation, uploadFile)
+router.post('/file/generate-one-time-link', oneTimeLinkValidation, generateFileOneTimeLink)
 
 export default router

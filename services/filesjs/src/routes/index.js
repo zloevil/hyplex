@@ -4,7 +4,7 @@ import config from 'config'
 import api from './api'
 import publicApi from './public'
 
-const log = log4js.getLogger('routers')
+const log = log4js.getLogger('routers>')
 log.level = config.logger.logLevel
 
 const router = new Router()
