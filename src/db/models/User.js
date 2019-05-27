@@ -75,7 +75,7 @@ class User {
   }
 
   static async registerNewUser(email, password) {
-    if (!password) {
+    if (password) {
       const { salt, hashPassword } = this.generateNewHashForPassword(password)
       return db.query`
         INSERT INTO "public"."user" ("user_id", "login", "salt", "digest") 
