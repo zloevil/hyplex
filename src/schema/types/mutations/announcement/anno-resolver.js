@@ -9,11 +9,11 @@ log.level = config.logger.level
 
 const schema = Joi.object().keys({
   shapes: Joi.string().required(),
-  rooms: Joi.object().keys({
+  rooms: Joi.array().items(Joi.object().keys({
     tags: Joi.array().items(Joi.string().alphanum()).required(),
     equipment: Joi.array().items(Joi.string().alphanum()).required(),
     walls: Joi.array().items(Joi.string().alphanum()).required(),
-  }),
+  })),
 })
 
 export default (parentValue, { shapes, rooms }, { req }) => {
