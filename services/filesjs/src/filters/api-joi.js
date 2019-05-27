@@ -8,7 +8,6 @@ import { MongooseObjectIdJoi } from './custom-jois'
 export const uploadFile = async (ctx, next) => {
   const schema = Joi.object().keys({
     directory: MongooseObjectIdJoi.string().isMongoObjectId(),
-    name: Joi.string().required(),
     file: Joi.any().required(),
   })
 
@@ -35,7 +34,7 @@ export const generateFileOneTimeLink = async (ctx, next) => {
         type: Joi.string().valid('upload').required(),
         name: Joi.string().regex(/[a-zA-Z0-9\-_.]*/).required(),
         isZipped: Joi.boolean(),
-        directory: Joi.string().alphanum(),
+        directory: Joi.string().regex(/[a-zA-Z0-9\-_]*/),
       })
       break
     case 'download':

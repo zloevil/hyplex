@@ -1,6 +1,6 @@
 import * as log4js from 'log4js'
 import config from 'config'
-import {GraphQLError} from 'graphql'
+import { GraphQLError } from 'graphql'
 import Joi from 'joi'
 import Announcement from '../../../../db/models/Announcement'
 
