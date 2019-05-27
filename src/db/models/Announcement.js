@@ -16,6 +16,7 @@ class Announcement {
     }
     return db.query`
        SELECT make_new_announcement(${userId}, ${data}, ${shapes}) AS id;
+       ;hashKey=${userId}${'reset'}
     `
   }
 
@@ -24,7 +25,8 @@ class Announcement {
       SELECT id, rooms, timestamp, shapes
       FROM owners
       JOIN announcements ON anno_id=id
-      WHERE user_id=${id};
+      WHERE user_id=${id}
+    ;hashKey=${id}
     `
   }
 }

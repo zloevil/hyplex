@@ -4,7 +4,4 @@ import config from 'config'
 const log = log4js.getLogger('schema.announcement-req-type.resolver>')
 log.level = config.logger.level
 
-export default parentValue => {
-  console.log(parentValue);
-  return parentValue.rooms
-}
+export default parentValue => parentValue.rooms

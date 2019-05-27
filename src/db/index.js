@@ -28,13 +28,16 @@ function reqPreparer(reqStrings, ...reqParams) {
 function getHashKey(preparedReq) {
   const isHashKeyExists = _.split(preparedReq.text, ';hashKey=')
   let hashKey = null
+  let needToResetCachedValue = false
   if (isHashKeyExists.length > 1) {
-    hashKey = preparedReq.values[preparedReq.values.length - 1]
+    needToResetCachedValue = preparedReq.values[preparedReq.values.length - 1] === 'reset'
+    const offset = needToResetCachedValue ? 2 : 1
+    hashKey = preparedReq.values[preparedReq.values.length - offset]
     preparedReq.text = isHashKeyExists[0]
-    preparedReq.values = _.dropRight(preparedReq.values, 1)
+    preparedReq.values = _.dropRight(preparedReq.values, offset)
   }
   // eslint-disable-next-line no-sequences
-  return [preparedReq, hashKey, preparedReq.text.indexOf('SELECT')]
+  return [preparedReq, hashKey, needToResetCachedValue]
 }
 
 async function query(reqStrings, ...reqParams) {
@@ -54,7 +57,8 @@ async function query(reqStrings, ...reqParams) {
   const temp = getHashKey(preparedReq)
   preparedReq = temp[0]
   const hashKey = temp[1]
-  if (hashKey && temp[2] !== -1) {
+  const needToReset = temp[2]
+  if (hashKey && !needToReset) {
     try {
       key = JSON.stringify(preparedReq)
       const cacheValue = await redisClient.hget(hashKey, key)
@@ -81,9 +85,9 @@ async function query(reqStrings, ...reqParams) {
     log.error('> Error while making a query to DB\n', e)
   }
   client.release()
-  log.debug('SERVER BY DB')
+  log.debug('SERVED BY DB')
 
-  if (hashKey && temp[2] !== -1) {
+  if (hashKey && !needToReset) {
     if (result.rows && result.rows.length === 1) {
       redisClient.hset(hashKey, key, JSON.stringify(result.rows[0]), 'EX', config.redis.EX)
       return result.rows[0]
