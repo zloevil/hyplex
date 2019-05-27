@@ -10,9 +10,13 @@ log.level = config.logger.level
 const schema = Joi.object().keys({
   shapes: Joi.string().required(),
   rooms: Joi.array().items(Joi.object().keys({
+    id: Joi.string(),
+    date: Joi.number(),
+    center: Joi.object().keys({ x: Joi.number(), y: Joi.number() }),
     tags: Joi.array().items(Joi.string().alphanum()).required(),
     equipment: Joi.array().items(Joi.string().alphanum()).required(),
-    walls: Joi.array().items(Joi.string().alphanum()).required(),
+    walls: Joi.array().items(Joi.string()).required(),
+    photos: Joi.array().items(Joi.string()),
   })),
 })
 
