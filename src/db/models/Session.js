@@ -2,7 +2,7 @@ import config from 'config'
 import * as log4js from 'log4js'
 import db from '../index'
 
-const log = log4js.getLogger('model.user>')
+const log = log4js.getLogger('model.session>')
 log.level = config.logger.level
 
 class Session {

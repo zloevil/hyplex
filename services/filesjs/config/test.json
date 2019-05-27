@@ -1,0 +1,8 @@
+{
+  "logger": {
+    "logLevel": "all"
+  },
+  "server": {
+    "port": 8080
+  }
+}
