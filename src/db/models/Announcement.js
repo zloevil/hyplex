@@ -30,6 +30,15 @@ class Announcement {
     `
   }
 
+  static getAnnouncementById(id, userId) {
+    return db.query`
+      SELECT id, rooms, timestamp, shapes
+      FROM announcements
+      WHERE id=${id}
+    ;hashKey=${userId}
+    `
+  }
+
   static isUserAnnouncement(userId, annoId) {
     return db.query`
       SELECT user_id, anno_id
