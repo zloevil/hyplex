@@ -72,7 +72,6 @@ class Rabbit {
 
       channel.consume(queueOut, msg => {
         const id = msg.properties.correlationId
-        // log.debug(id)
         Events.deleteEvent(id)
           .then(() => {
             channel.ack(msg)

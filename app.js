@@ -15,4 +15,4 @@ server.listen(port, () => {
 
 server.pool = pool
 
-module.exports = server
+export default server
