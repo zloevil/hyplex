@@ -29,6 +29,41 @@ class Announcement {
     ;hashKey=${id}
     `
   }
+
+  static getAnnouncementById(id, userId) {
+    return db.query`
+      SELECT id, rooms, timestamp, shapes
+      FROM announcements
+      WHERE id=${id}
+    ;hashKey=${userId}
+    `
+  }
+
+  static isUserAnnouncement(userId, annoId) {
+    return db.query`
+      SELECT user_id, anno_id
+      FROM owners
+      WHERE user_id=${userId} AND anno_id=${annoId}
+    `
+  }
+
+  static async editUserAnnouncement(annoId, userId, rooms, shapes) {
+    let data
+    try {
+      data = JSON.stringify(rooms)
+    } catch (e) {
+      log.error('> Error, while trying to stringify data for a announcement!')
+      throw e
+    }
+    const check = await Announcement.isUserAnnouncement(userId, annoId)
+    if (check.user_id !== userId) return []
+
+    return db.query`
+      UPDATE "public"."announcements"
+      SET "rooms" = ${data}, "shapes" = ${shapes} WHERE "id" = ${annoId}
+      RETURNING id
+    `
+  }
 }
 
 export default Announcement

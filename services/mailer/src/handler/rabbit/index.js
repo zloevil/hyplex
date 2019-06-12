@@ -88,7 +88,7 @@ class Rabbit {
         let message
         try {
           message = JSON.stringify({
-            createdAt: (new Date()).toISOString()
+            createdAt: (new Date()).toISOString(),
           })
         } catch (e) {
           log.error('> Error, while trying to stringify message!\n', e)

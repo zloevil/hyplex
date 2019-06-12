@@ -1,6 +1,7 @@
 import { GraphQLObjectType } from 'graphql'
 import UserType from '../user'
 import AnnouncementsType from '../announcement'
+import AnnouncementsByIdType from '../announcement-by-id'
 
 
 const RootQuery = new GraphQLObjectType({
@@ -8,6 +9,7 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     user: UserType,
     announcements: AnnouncementsType,
+    announcementById: AnnouncementsByIdType,
   },
   directives: {
     hasScope: {

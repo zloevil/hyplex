@@ -5,6 +5,7 @@ import LogoutType from '../common/logout'
 import LoginGoogleType from '../common/login-google'
 import AnnouncementType from '../announcement'
 import OneTimeLinkType from '../one-time-link'
+import AnnouncementEditType from '../announcement-edit'
 
 
 const RootMutation = new GraphQLObjectType({
@@ -16,6 +17,7 @@ const RootMutation = new GraphQLObjectType({
     loginGoogle: LoginGoogleType,
     announcement: AnnouncementType,
     oneTimeLink: OneTimeLinkType,
+    announcementEdit: AnnouncementEditType,
   },
   directives: {
     hasScope: {
