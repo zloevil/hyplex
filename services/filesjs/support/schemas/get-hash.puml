@@ -1,0 +1,79 @@
+@startuml
+
+
+
+
+!define _i <&account-login>
+!define _o <&account-logout>
+!define _p <&project>
+!define _b <&caret-right>
+!define _t <&copywriting>
+!define _s <&spreadsheet>
+
+!define c(v)  <size:11>v </size>
+!define i(v)  <color:DimGrey>c(_p v)</color>
+
+!definelong d(v)
+--
+  c(v)
+!enddefinelong
+
+!definelong d(v,v1)
+--
+  c(v)
+  c(v1)
+!enddefinelong
+
+!definelong d(v,v1,v2)
+--
+  c(v)
+  c(v1)
+  c(v2)
+!enddefinelong
+
+!definelong d(v,v1,v2,v3)
+--
+  c(v)
+  c(v1)
+  c(v2)
+  c(v3)
+!enddefinelong
+
+header
+
+  | project:  |       files.JS         |
+  | version:  | 0.0.1                     |
+  | date:     | 2018.08.06                |
+  | updated:  | %date[yyyy.MM.dd HH:mm]%  |
+
+end header
+
+footer
+
+  © RTS %date[yyyy]%
+end footer
+
+title Get hash link to file\n
+
+package "Backend" as backend {
+    package api {
+        component GetHash
+    }
+}
+
+package "files.JS" as filesjs {
+    package HTTPS {
+        component GenerateOneTimeLnk
+        component checkFile
+        component authViaToken
+    }
+}
+
+GetHash ---> authViaToken
+authViaToken ---> checkFile
+checkFile ---> GenerateOneTimeLnk
+GenerateOneTimeLnk ---> backend
+
+
+@enduml
+

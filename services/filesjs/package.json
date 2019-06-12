@@ -1,0 +1,50 @@
+{
+  "name": "filesjs",
+  "version": "0.1.0a448",
+  "description": "file service",
+  "main": "hook.js",
+  "repository": "https://github.com/zloevil/filesjs.git",
+  "author": "Sergey Suslov & Kukhtin Vasily",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "nodemon hook.js"
+  },
+  "dependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/register": "^7.4.0",
+    "babel-polyfill": "^6.26.0",
+    "boom": "^7.3.0",
+    "co-busboy": "^1.4.0",
+    "config": "^3.1.0",
+    "dotenv": "^7.0.0",
+    "fs-extra": "^7.0.1",
+    "joi": "^14.3.1",
+    "koa": "^2.7.0",
+    "koa-body": "^4.1.0",
+    "koa-convert": "^1.2.0",
+    "koa-logger": "^3.2.0",
+    "koa-router": "^7.4.0",
+    "log4js": "^4.1.0",
+    "mongoose": "^5.5.2"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.48",
+    "@types/koa-router": "^7.0.40",
+    "@types/log4js": "^2.3.5",
+    "@types/node": "^11.13.6",
+    "babel-eslint": "^10.0.1",
+    "clarify": "^2.1.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-flowtype": "^3.6.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jest": "^22.4.1",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-security": "^1.4.0",
+    "nodemon": "^1.18.11",
+    "trace": "^3.1.1"
+  }
+}
